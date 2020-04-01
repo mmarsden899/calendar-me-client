@@ -9,21 +9,13 @@ const CalendarView = () => {
         const loadDefaultData = async () => {
             const current = moment()
             setCurrentDate(current)
-            console.log(current)
         }
         loadDefaultData()
     }, [])
 
-    const defaultCalenderView = {
-        weeks: [1,2,3,4,5],
-        days: [1,2,3,4,5,6,7]
-    }
-    const { weeks, days } = defaultCalenderView
-
     const firstDay = () => {
         let dateObject = moment()
         let first = moment(dateObject).startOf('month').format('d')
-        console.log('first --->', first)
         return first
     }
 
@@ -33,16 +25,14 @@ const CalendarView = () => {
         <td className="calendar-day empty">{''}</td>
         )
     }
-    let daysInMonth = [];
+    let days = [];
     for (let k = 1; k <= moment().daysInMonth(); k++) {
-        daysInMonth.push(
+        days.push(
             <td key={k} className="calendar-day">
           {k}
         </td>
       );
     }
-    console.log('blank days --->', blankDays)
-    console.log('days in month --->', daysInMonth)
     
     const weekdayShort = moment.weekdaysShort().map(day => {
         return (
@@ -50,7 +40,7 @@ const CalendarView = () => {
         )
     })
 
-    var totalSlots = [...blankDays, ...daysInMonth];
+    var totalSlots = [...blankDays, ...days];
     let rows = [];
     let cells = [];
 
@@ -67,22 +57,7 @@ const CalendarView = () => {
         }
       });
 
-    // const defaultCalendarMap = (
-    //     <table>
-    //         <tbody>
-    //             <tr>{weekdayShort}</tr>
-    //         {weeks.map((week) => (
-    //             <tr>
-    //                 {days.map((day) => (
-    //                     <th>{day}</th>
-    //                 ))}
-    //             </tr>
-    //         ))}
-    //         </tbody>
-    //     </table>
-    // )
-
-    let daysinmonth = rows.map((d, i) => {
+    let daysInMonth = rows.map((d, i) => {
         return <tr>{d}</tr>;
       });
 
@@ -91,7 +66,7 @@ const CalendarView = () => {
         <thead>
           <tr>{weekdayShort}</tr>
         </thead>
-        <tbody>{daysinmonth}</tbody>
+        <tbody>{daysInMonth}</tbody>
       </table>
       )
     return (
