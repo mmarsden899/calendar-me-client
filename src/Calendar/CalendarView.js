@@ -3,18 +3,18 @@ import moment from 'moment'
 
 const CalendarView = () => {
 
-    const [currentDate, setCurrentDate] = useState({})
+    // const [currentDate, setCurrentDate] = useState({})
+    const [dateObject, setDateObject] = useState(moment())
 
     useEffect(() => {
         const loadDefaultData = async () => {
-            const current = moment()
-            setCurrentDate(current)
+            // const current = moment()
+            // setCurrentDate(current)
         }
         loadDefaultData()
     }, [])
 
     const firstDay = () => {
-        let dateObject = moment()
         let first = moment(dateObject).startOf('month').format('d')
         return first
     }
