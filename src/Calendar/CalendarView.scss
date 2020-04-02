@@ -1,3 +1,36 @@
+table {
+  width: 100%;
+}
+
 .hover:hover {
   cursor: pointer;
+}
+
+.current-day {
+  background-color: blue;
+  color: white;
+  border-radius: 25%;
+}
+
+.mini {
+  width: 250px;
+}
+
+.mini-header {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+.mini-month {
+  margin-right: 5px;
+}
+
+.arrow-container {
+  margin-left: 5px;
+  width: 50px;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
 }
