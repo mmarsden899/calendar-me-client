@@ -7,15 +7,13 @@ import moment from "moment";
 const CalendarView = () => {
   const [dateObject, setDateObject] = useState(moment());
 
-  const firstDay = () => {
-    let first = moment(dateObject)
-      .startOf("month")
-      .format("d");
-    return first;
-  };
-
   const currentDate = Number(moment().format("d"));
   const currentMonth = moment().format("MMMM");
+
+  const firstDay = () => {
+    let first = dateObject.startOf("month").format("d");
+    return first;
+  };
 
   let blankDays = [];
   for (let i = 0; i < firstDay(); i++) {
@@ -25,18 +23,19 @@ const CalendarView = () => {
       </td>
     );
   }
+
+  const currentChecker = k => {
+    if (k === currentDate && dateObject.format("MMMM") === currentMonth) {
+      return "calendar-day current-day";
+    } else {
+      return "calendar-day";
+    }
+  };
+
   let days = [];
-  for (let k = 1; k <= moment(dateObject).daysInMonth(); k++) {
+  for (let k = 1; k <= dateObject.daysInMonth(); k++) {
     days.push(
-      <td
-        key={k}
-        className={
-          k === currentDate &&
-          moment(dateObject).format("MMMM") === currentMonth
-            ? "calendar-day current-day"
-            : "calendar-day"
-        }
-      >
+      <td key={k} className={currentChecker(k)}>
         {k}
       </td>
     );
@@ -91,7 +90,7 @@ const CalendarView = () => {
           className="hover"
         />
       </div>
-      <div className="mini-month">{moment(dateObject).format("MMMM YYYY")}</div>
+      <div className="mini-month">{dateObject.format("MMMM YYYY")}</div>
     </div>
   );
 
