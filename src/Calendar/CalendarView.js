@@ -7,9 +7,8 @@ import moment from "moment";
 const CalendarView = () => {
   const [dateObject, setDateObject] = useState(moment());
 
-  const currentDate = Number(moment().format("d"));
+  const currentDate = Number(moment().date());
   const currentMonth = moment().format("MMMM");
-
   const firstDay = () => {
     let first = dateObject.startOf("month").format("d");
     return first;
