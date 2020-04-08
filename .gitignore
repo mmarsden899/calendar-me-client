@@ -1,2 +1,4 @@
 src/auth_config.json
+src/apiConfig.js
+src/NewCalendar.json
 node_modules

@@ -5,6 +5,7 @@ import CalendarView from "./Calendar/CalendarView";
 import NavBar from "./Components/NavBar";
 import { useAuth0 } from "./react-auth0-spa";
 import Profile from "./Components/Profile";
+import Admin from './Admin'
 import history from "./Utils/History";
 import PrivateRoute from "./Components/PrivateRoute";
 
@@ -22,9 +23,9 @@ function App() {
         </header>
         <Switch>
           <Route path="/" exact component={CalendarView} />
+          <Route path="/admin" exact component={Admin} />
           <PrivateRoute path="/profile" component={Profile} />
         </Switch>
-        {/* <CalendarView /> */}
       </Router>
     </div>
   );
