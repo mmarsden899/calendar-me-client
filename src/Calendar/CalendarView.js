@@ -13,7 +13,7 @@ import config from "../auth_config.json";
 const CalendarView = () => {
   const [dateObject, setDateObject] = useState(moment());
   const [calendar, setCalendar] = useState({});
-  const [holidays, setHolidays] = useState({});
+  const [holidays, setHolidays] = useState([]);
 
   const currentDate = Number(moment().date());
   const currentMonth = moment().format("MMMM");
@@ -26,7 +26,7 @@ const CalendarView = () => {
           config.holiday
         }&country=US&year=${moment(dateObject).format(
           "YYYY"
-        )}&type=national,local,observance`
+        )}&type=national,observance`
       );
       setHolidays(holidayResponse.data.response.holidays);
       console.log(holidayResponse.data.response.holidays);
@@ -48,7 +48,22 @@ const CalendarView = () => {
       }
     };
     loadStuff();
-  }, [dateObject]);
+  }, []);
+
+  const findHoliday = (date) => {
+    const returned = holidays.filter((holiday) => holiday.date.iso === date);
+    return returned;
+  };
+
+  const handleDayMap = (date) => {
+    let formatedDate = date;
+    if (date.toString().length < 2) {
+      formatedDate = "0" + formatedDate.toString();
+    }
+    return `${moment(dateObject).format("YYYY")}-${moment(dateObject).format(
+      "MM"
+    )}-${formatedDate}`;
+  };
 
   const firstDay = () => {
     let first = dateObject.startOf("month").format("d");
@@ -72,12 +87,19 @@ const CalendarView = () => {
     }
   };
 
+  const holidaybyDay = (k) => {
+    const answer = handleDayMap(k);
+    const whatever = findHoliday(answer);
+    return whatever.map((holiday) => <div>{holiday.name}</div>);
+  };
+
   let days = [];
   for (let k = 1; k <= dateObject.daysInMonth(); k++) {
     days.push(
       <td key={k} className="calendar-day">
         <div className="day-container">
           <p className={currentChecker(k)}>{k}</p>
+          <div>{holidaybyDay(k)}</div>
         </div>
       </td>
     );
