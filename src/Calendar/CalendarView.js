@@ -6,7 +6,11 @@ import moment from "moment";
 import apiUrl from "../apiConfig";
 import axios from "axios";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faArrowRight, faArrowLeft } from "@fortawesome/free-solid-svg-icons";
+import {
+  faArrowRight,
+  faArrowLeft,
+  faHandHoldingWater,
+} from "@fortawesome/free-solid-svg-icons";
 import "./CalendarView.scss";
 import config from "../auth_config.json";
 
@@ -28,7 +32,13 @@ const CalendarView = () => {
           "YYYY"
         )}&type=national,observance`
       );
-      setHolidays(holidayResponse.data.response.holidays);
+      const filtered = holidayResponse.data.response.holidays.filter(
+        (holiday) =>
+          holiday.type[0] === "National holiday" ||
+          holiday.type[0] === "Observance"
+      );
+      console.log("filtered! ---->", filtered);
+      setHolidays(filtered);
       console.log(holidayResponse.data.response.holidays);
       if (user) {
         try {
@@ -79,6 +89,14 @@ const CalendarView = () => {
     );
   }
 
+  const limiter = (name) => {
+    if (name.length > 20) {
+      return name.substring(0, 20) + "..";
+    } else {
+      return name;
+    }
+  };
+
   const currentChecker = (k) => {
     if (k === currentDate && dateObject.format("MMMM") === currentMonth) {
       return "day current-day";
@@ -90,7 +108,17 @@ const CalendarView = () => {
   const holidaybyDay = (k) => {
     const answer = handleDayMap(k);
     const whatever = findHoliday(answer);
-    return whatever.map((holiday) => <div>{holiday.name}</div>);
+    return whatever.map((holiday) => (
+      <div
+        className={
+          holiday.type[0] === "National holiday"
+            ? "single green"
+            : "single blue"
+        }
+      >
+        {limiter(holiday.name)}
+      </div>
+    ));
   };
 
   let days = [];
@@ -98,8 +126,10 @@ const CalendarView = () => {
     days.push(
       <td key={k} className="calendar-day">
         <div className="day-container">
-          <p className={currentChecker(k)}>{k}</p>
-          <div>{holidaybyDay(k)}</div>
+          <div className="date-container">
+            <div className={currentChecker(k)}>{k}</div>
+          </div>
+          <div className="holday-container">{holidaybyDay(k)}</div>
         </div>
       </td>
     );
@@ -160,11 +190,11 @@ const CalendarView = () => {
 
   return (
     <div className="calendar-view">
-      <MiniCalendar
+      {/* <MiniCalendar
         header={header}
         weekdayShort={weekdayShort}
         daysInMonth={daysInMonth}
-      />
+      /> */}
       <div className="full-calendar">
         <FullCalendar
           header={header}
