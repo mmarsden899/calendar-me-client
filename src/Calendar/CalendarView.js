@@ -58,7 +58,7 @@ const CalendarView = () => {
       }
     };
     loadStuff();
-  }, []);
+  }, [dateObject]);
 
   const findHoliday = (date) => {
     const returned = holidays.filter((holiday) => holiday.date.iso === date);
@@ -125,11 +125,13 @@ const CalendarView = () => {
   for (let k = 1; k <= dateObject.daysInMonth(); k++) {
     days.push(
       <td key={k} className="calendar-day">
-        <div className="day-container">
-          <div className="date-container">
-            <div className={currentChecker(k)}>{k}</div>
+        <div className="calendar-day-container">
+          <div className="day-container">
+            <div className="date-container">
+              <div className={currentChecker(k)}>{k}</div>
+            </div>
+            <div className="holday-container">{holidaybyDay(k)}</div>
           </div>
-          <div className="holday-container">{holidaybyDay(k)}</div>
         </div>
       </td>
     );
@@ -157,7 +159,18 @@ const CalendarView = () => {
   });
 
   let daysInMonth = rows.map((d, i) => {
-    return <tr key={`days${i}`}>{d}</tr>;
+    return (
+      <tr
+        key={`days${i}`}
+        style={
+          i > 0
+            ? { height: `calc(100vh / ${rows.length} + 5px)` }
+            : { height: 0 }
+        }
+      >
+        {d}
+      </tr>
+    );
   });
 
   const handleMonthBack = () => {
