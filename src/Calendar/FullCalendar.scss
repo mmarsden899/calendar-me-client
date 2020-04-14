@@ -43,7 +43,7 @@
     width: calc(100vw / 7);
     height: 50px;
     padding: 0;
-    overflow-x: hidden;
+    // overflow-y: hidden;
   }
 
   .current-day {
@@ -103,5 +103,10 @@
 
   .single {
     font-size: 12px;
+  }
+
+  .highlighted {
+    border: 2px solid blue;
+    width: calc(100% - 3px);
   }
 }

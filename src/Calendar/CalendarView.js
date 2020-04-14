@@ -18,6 +18,7 @@ const CalendarView = () => {
   const [dateObject, setDateObject] = useState(moment());
   const [calendar, setCalendar] = useState({});
   const [holidays, setHolidays] = useState([]);
+  const [highlighted, setHighlighted] = useState(Number(moment().date()));
 
   const currentDate = Number(moment().date());
   const currentMonth = moment().format("MMMM");
@@ -59,6 +60,11 @@ const CalendarView = () => {
     };
     loadStuff();
   }, [dateObject]);
+
+  const handleCurrentlySelected = (event) => {
+    setHighlighted(Number(event.currentTarget.dataset["number"]));
+    console.log(event.currentTarget.dataset["number"]);
+  };
 
   const findHoliday = (date) => {
     const returned = holidays.filter((holiday) => holiday.date.iso === date);
@@ -124,9 +130,18 @@ const CalendarView = () => {
   let days = [];
   for (let k = 1; k <= dateObject.daysInMonth(); k++) {
     days.push(
-      <td key={k} className="calendar-day">
+      <td
+        key={k}
+        className="calendar-day"
+        data-number={k}
+        onClick={handleCurrentlySelected}
+      >
         <div className="calendar-day-container">
-          <div className="day-container">
+          <div
+            className={
+              k === highlighted ? "day-container highlighted" : "day-container"
+            }
+          >
             <div className="date-container">
               <div className={currentChecker(k)}>{k}</div>
             </div>
