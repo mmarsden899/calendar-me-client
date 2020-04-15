@@ -1,14 +1,81 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import FullCalendar from "./FullCalendar";
+import MiniCalendar from "./MiniCalendar";
+import { useAuth0 } from "../react-auth0-spa";
+import moment from "moment";
+import apiUrl from "../apiConfig";
+import axios from "axios";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowRight, faArrowLeft } from "@fortawesome/free-solid-svg-icons";
 import "./CalendarView.scss";
-import moment from "moment";
+import config from "../auth_config.json";
 
 const CalendarView = () => {
   const [dateObject, setDateObject] = useState(moment());
+  const [calendar, setCalendar] = useState({});
+  const [holidays, setHolidays] = useState([]);
+  const [highlighted, setHighlighted] = useState(Number(moment().date()));
 
   const currentDate = Number(moment().date());
   const currentMonth = moment().format("MMMM");
+  const { user } = useAuth0();
+
+  useEffect(() => {
+    const loadStuff = async () => {
+      const holidayResponse = await axios(
+        `https://calendarific.com/api/v2/holidays?api_key=${
+          config.holiday
+        }&country=US&year=${moment(dateObject).format(
+          "YYYY"
+        )}&type=national,observance`
+      );
+      const filtered = holidayResponse.data.response.holidays.filter(
+        (holiday) =>
+          holiday.type[0] === "National holiday" ||
+          holiday.type[0] === "Observance"
+      );
+      console.log("filtered! ---->", filtered);
+      setHolidays(filtered);
+      console.log(holidayResponse.data.response.holidays);
+      if (user) {
+        try {
+          const getCalendar = await axios(apiUrl + "/calendars/" + user.sub);
+          setCalendar(getCalendar.data.calendar);
+          console.log(getCalendar);
+        } catch (error) {
+          const sendCalendar = await axios.post(apiUrl + "/calendars", {
+            calendar: { calendar },
+            user: user,
+          });
+          setCalendar(sendCalendar.data.calendar);
+          console.log(sendCalendar);
+        }
+      } else {
+        console.log("try signing up to personalize your calendar today!");
+      }
+    };
+    loadStuff();
+  }, [dateObject]);
+
+  const handleCurrentlySelected = (event) => {
+    setHighlighted(Number(event.currentTarget.dataset["number"]));
+  };
+
+  const findHoliday = (date) => {
+    const returned = holidays.filter((holiday) => holiday.date.iso === date);
+    return returned;
+  };
+
+  const handleDayMap = (date) => {
+    let formatedDate = date;
+    if (date.toString().length < 2) {
+      formatedDate = "0" + formatedDate.toString();
+    }
+    return `${moment(dateObject).format("YYYY")}-${moment(dateObject).format(
+      "MM"
+    )}-${formatedDate}`;
+  };
+
   const firstDay = () => {
     let first = dateObject.startOf("month").format("d");
     return first;
@@ -23,24 +90,64 @@ const CalendarView = () => {
     );
   }
 
-  const currentChecker = k => {
-    if (k === currentDate && dateObject.format("MMMM") === currentMonth) {
-      return "calendar-day current-day";
+  const limiter = (name) => {
+    if (name.length > 20) {
+      return name.substring(0, 20) + "..";
     } else {
-      return "calendar-day";
+      return name;
     }
+  };
+
+  const currentChecker = (k) => {
+    if (k === currentDate && dateObject.format("MMMM") === currentMonth) {
+      return "day current-day";
+    } else {
+      return "day";
+    }
+  };
+
+  const holidaybyDay = (k) => {
+    const answer = handleDayMap(k);
+    const whatever = findHoliday(answer);
+    return whatever.map((holiday) => (
+      <div
+        className={
+          holiday.type[0] === "National holiday"
+            ? "single green"
+            : "single blue"
+        }
+      >
+        {limiter(holiday.name)}
+      </div>
+    ));
   };
 
   let days = [];
   for (let k = 1; k <= dateObject.daysInMonth(); k++) {
     days.push(
-      <td key={k} className={currentChecker(k)}>
-        {k}
+      <td
+        key={k}
+        className="calendar-day"
+        data-number={k}
+        onClick={handleCurrentlySelected}
+      >
+        <div className="calendar-day-container">
+          <div
+            className={
+              k === highlighted ? "day-container highlighted" : "day-container"
+            }
+          >
+            <div className="date-container">
+              <div className={currentChecker(k)}>{k}</div>
+            </div>
+            <div className="holday-container">{holidaybyDay(k)}</div>
+          </div>
+        </div>
       </td>
     );
   }
 
-  const weekdayShort = moment.weekdaysShort().map(day => {
+  const weekdayShort = moment.weekdaysShort().map((day) => {
     return <th key={day}>{day}</th>;
   });
 
@@ -61,8 +168,34 @@ const CalendarView = () => {
     }
   });
 
+  let daysInMonthBlank = rows.map((d, i) => {
+    return (
+      <tr
+        key={`days${i}`}
+        style={
+          i > 0
+            ? { height: `calc(100vh / ${rows.length} + 5px)` }
+            : { height: 0 }
+        }
+      >
+        {d}
+      </tr>
+    );
+  });
+
   let daysInMonth = rows.map((d, i) => {
-    return <tr key={`days${i}`}>{d}</tr>;
+    return (
+      <tr
+        key={`days${i}`}
+        style={
+          i > 0
+            ? { height: `calc(100vh / ${rows.length} + 5px)` }
+            : { height: 0 }
+        }
+      >
+        {d}
+      </tr>
+    );
   });
 
   const handleMonthBack = () => {
@@ -93,18 +226,43 @@ const CalendarView = () => {
     </div>
   );
 
-  const defaultCalendarMap = (
-    <div className="calendar mini">
-      {header}
-      <table className="calendar-day">
-        <thead>
-          <tr>{weekdayShort}</tr>
-        </thead>
-        <tbody>{daysInMonth}</tbody>
-      </table>
+  const currentDay = (
+    <div className="side-bar">
+      <div>
+        <h1>Hi</h1>
+      </div>
+      {holidays
+        .filter((holiday) => {
+          return (
+            holiday.date.iso ===
+            `${moment(dateObject).format("YYYY")}-${moment(dateObject).format(
+              "MM"
+            )}-${highlighted}`
+          );
+        })
+        .map((holiday) => (
+          <div>{holiday.name}</div>
+        ))}
     </div>
   );
-  return <div className="calendar-view-container">{defaultCalendarMap}</div>;
+
+  return (
+    <div className="calendar-view">
+      {/* <MiniCalendar
+        header={header}
+        weekdayShort={weekdayShort}
+        daysInMonth={daysInMonthBlank}
+      /> */}
+      {currentDay}
+      <div className="full-calendar">
+        <FullCalendar
+          header={header}
+          weekdayShort={weekdayShort}
+          daysInMonth={daysInMonth}
+        />
+      </div>
+    </div>
+  );
 };
 
 export default CalendarView;

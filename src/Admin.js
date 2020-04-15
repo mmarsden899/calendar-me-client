@@ -20,9 +20,15 @@ const Admin = () => {
             })
     }
 
+    const getCalendar = async () => {
+        await axios(apiUrl + '/calendars/' + user.sub)
+            .then(console.log)
+    }
+
     return (
         <div>
             <button onClick={createCalendar}>create calendar</button>
+            <button onClick={getCalendar}>get calendar</button>
         </div>
     )
 };

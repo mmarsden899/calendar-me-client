@@ -1,0 +1,115 @@
+.full {
+  p {
+    margin: 0;
+    padding: 0;
+  }
+  table {
+    border-spacing: 0;
+  }
+  td {
+    border: 1px solid gray;
+    border-right: none;
+    border-top: none;
+  }
+
+  td:last-child {
+    border-right: 1px solid gray;
+  }
+
+  th {
+    border-bottom: 1px solid gray;
+  }
+
+  .hover:hover {
+    cursor: pointer;
+  }
+
+  .calendar {
+  }
+
+  .day-container {
+    height: 100%;
+    width: 100%;
+  }
+
+  .calendar-day-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    height: 100%;
+  }
+
+  .calendar-day {
+    width: calc(100vw / 7);
+    height: 50px;
+    padding: 0;
+    // overflow-y: hidden;
+  }
+
+  .current-day {
+    color: blue !important;
+    font-weight: 700;
+    height: 20px;
+    color: white;
+  }
+
+  .mini-header {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+  }
+
+  .mini-month {
+    margin-right: 5px;
+  }
+
+  .arrow-container {
+    margin-left: 5px;
+    width: 50px;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+  }
+
+  .day {
+    margin: 10px 10px 0 0;
+    height: 20px;
+    text-align: right;
+  }
+
+  .date-container {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-content: flex-end;
+    text-align: right;
+  }
+
+  .green {
+    background-color: lightgreen;
+  }
+
+  .blue {
+    background-color: lightblue;
+  }
+
+  .holiday-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    height: 100%;
+  }
+
+  .single {
+    font-size: 12px;
+    width: 95%;
+    margin: 0 auto;
+    margin-top: 5px;
+  }
+
+  .highlighted {
+    border: 2px solid blue;
+    width: calc(100% - 3px);
+  }
+}
