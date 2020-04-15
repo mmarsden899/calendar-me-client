@@ -4,5 +4,12 @@
 }
 
 .full-calendar {
-  width: calc(100% - 250px);
+  width: calc(100% - 300px);
+  margin-left: 5px;
+}
+
+.side-bar {
+  max-width: 240px;
+  overflow: hidden;
+  position: relative;
 }

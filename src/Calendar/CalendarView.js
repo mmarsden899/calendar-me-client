@@ -6,11 +6,7 @@ import moment from "moment";
 import apiUrl from "../apiConfig";
 import axios from "axios";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  faArrowRight,
-  faArrowLeft,
-  faHandHoldingWater,
-} from "@fortawesome/free-solid-svg-icons";
+import { faArrowRight, faArrowLeft } from "@fortawesome/free-solid-svg-icons";
 import "./CalendarView.scss";
 import config from "../auth_config.json";
 
@@ -63,7 +59,6 @@ const CalendarView = () => {
 
   const handleCurrentlySelected = (event) => {
     setHighlighted(Number(event.currentTarget.dataset["number"]));
-    console.log(event.currentTarget.dataset["number"]);
   };
 
   const findHoliday = (date) => {
@@ -173,6 +168,21 @@ const CalendarView = () => {
     }
   });
 
+  let daysInMonthBlank = rows.map((d, i) => {
+    return (
+      <tr
+        key={`days${i}`}
+        style={
+          i > 0
+            ? { height: `calc(100vh / ${rows.length} + 5px)` }
+            : { height: 0 }
+        }
+      >
+        {d}
+      </tr>
+    );
+  });
+
   let daysInMonth = rows.map((d, i) => {
     return (
       <tr
@@ -216,13 +226,34 @@ const CalendarView = () => {
     </div>
   );
 
+  const currentDay = (
+    <div className="side-bar">
+      <div>
+        <h1>Hi</h1>
+      </div>
+      {holidays
+        .filter((holiday) => {
+          return (
+            holiday.date.iso ===
+            `${moment(dateObject).format("YYYY")}-${moment(dateObject).format(
+              "MM"
+            )}-${highlighted}`
+          );
+        })
+        .map((holiday) => (
+          <div>{holiday.name}</div>
+        ))}
+    </div>
+  );
+
   return (
     <div className="calendar-view">
       {/* <MiniCalendar
         header={header}
         weekdayShort={weekdayShort}
-        daysInMonth={daysInMonth}
+        daysInMonth={daysInMonthBlank}
       /> */}
+      {currentDay}
       <div className="full-calendar">
         <FullCalendar
           header={header}
